@@ -1,42 +1,23 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:http/http.dart' as http;
+import 'LoadingPage.dart';
 import 'PostData.dart';
 import 'MapMarker.dart';
 
 
-Future<List<PostData>> fetchPhotos(http.Client client) async {
-  List<PostData> posts = [];
-  final response =
-  await client.get('https://picturepost.ou.edu/app/GetPostList');
-  List model = jsonDecode(response.body);
-  for(int i = 0; i < model.length; i++) {
-    String installDate = model[i]["installDate"];
-    int postPictureId = model[i]["postPictureId"];
-    int referencePictureSetId = model[i]["referencePictureSetId"];
-    bool ready = model[i]["ready"];
-    String name = model[i]["name"];
-    String description = model[i]["description"];
-    int personId = model[i]["personId"];
-    double lon = model[i]["lon"].toDouble();
-    int postId = model[i]["postId"];
-    String recordTimeStamp = model[i]["recordTimeStamp"];
-    double lat = model[i]["lat"].toDouble();
-    posts.add(new PostData(installDate: installDate, postPictureId: postPictureId,
-    referencePictureSetId: referencePictureSetId, ready: ready, name: name,
-    description: description, personId: personId, lon: lon, postId: postId,
-    recordTimeStamp: recordTimeStamp, lat: lat));
-  }
-  print(posts.length-1);
-  return posts;
+void main() {
+  runApp(Start());
 }
 
-
-void main() {
-  runApp(MyApp());
+class Start extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: LoadingPage(),
+    );
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -47,28 +28,24 @@ class MyApp extends StatefulWidget {
 
 }
 
-
 class MyAppState extends State<MyApp> {
   GoogleMapController mapController;
   final List<Marker> markers = [];
-  List<PostData> posts = [];
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  List<PostData> posts;
+  final LatLng _center = const LatLng(39.8283, -98.5795);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
-  void test() async{
-    posts = await fetchPhotos(http.Client());
-    fillList();
-  }
-
   void fillList() {
+    print("begin");
+    print(posts.length);
+    print("end");
     for (var post in posts) {
       markers.add(MapMarker(id: posts.indexOf(post).toString(), position:
-        LatLng(post.lat, post.lon), icon: BitmapDescriptor.
-      defaultMarkerWithHue
-        (BitmapDescriptor.hueRed),name: post.name,
+        LatLng(post.lat, post.lon), icon: BitmapDescriptor.fromAsset(
+          "assets/default.png"),name: post.name,
           description: post.description).toMarker());
     }
   }
@@ -77,7 +54,8 @@ class MyAppState extends State<MyApp> {
   Location location;
   @override
   Widget build(BuildContext context) {
-    test();
+    posts = widget.posts;
+    fillList();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -106,7 +84,7 @@ class MyAppState extends State<MyApp> {
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(
             target: _center,
-            zoom: 11.0,
+            zoom: 3.25,
           ),
           markers: markers.toSet(),
         ),

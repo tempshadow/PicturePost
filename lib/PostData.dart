@@ -1,6 +1,3 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 class PostData {
   final String installDate;
   final int postPictureId;
@@ -27,10 +24,10 @@ class PostData {
       name: json['name'],
       description: json['description'],
       personId: json['personId'],
-      lon: json['lon'],
+      lon: json['lon'].toDouble(),
       postId: json['postId'],
       recordTimeStamp: json['recordTimeStamp'],
-      lat: json['lat'],
+      lat: json['lat'].toDouble(),
     );
   }
 }
