@@ -1,3 +1,5 @@
+import 'package:Picturepost/FavDB.dart';
+import 'package:Picturepost/Favorite.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -5,11 +7,13 @@ import 'package:location/location.dart';
 import 'LoadingPage.dart';
 import 'PostData.dart';
 import 'MapMarker.dart';
-
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 void main() {
   runApp(Start());
 }
+
 
 class Start extends StatelessWidget {
   @override
@@ -29,24 +33,23 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  FavDB favDatabase = new FavDB();
   GoogleMapController mapController;
   final List<Marker> markers = [];
   List<PostData> posts;
+  List<Favorite> favorites;
   final LatLng _center = const LatLng(39.8283, -98.5795);
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 
-  void fillList() {
-    print("begin");
-    print(posts.length);
-    print("end");
+  void fillList(BuildContext context) {
     for (var post in posts) {
       markers.add(MapMarker(id: posts.indexOf(post).toString(), position:
         LatLng(post.lat, post.lon), icon: BitmapDescriptor.fromAsset(
           "assets/default.png"),name: post.name,
-          description: post.description).toMarker());
+          description: post.description, context: context).toMarker());
     }
   }
   LocationData currentLocation;
@@ -54,8 +57,9 @@ class MyAppState extends State<MyApp> {
   Location location;
   @override
   Widget build(BuildContext context) {
+    favDatabase.create();
     posts = widget.posts;
-    fillList();
+    fillList(context);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -72,7 +76,8 @@ class MyAppState extends State<MyApp> {
               OutlineButton(
                   child: Text("Favorites", style: TextStyle(color: Colors.green)),
                   onPressed: null,
-                  shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0))
+                  shape: RoundedRectangleBorder(borderRadius:
+                  new BorderRadius.circular(10.0)),
               ),
               IconButton(
                 icon: Icon(Icons.my_location, color: Colors.green),
@@ -90,6 +95,10 @@ class MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  void getFavorites() async{
+    favorites = await favDatabase.favorites();
   }
 
   void updateMap() async {
