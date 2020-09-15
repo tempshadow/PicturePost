@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl:
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -41,6 +42,7 @@ dev_dependencies:
   sqflite:
   path:
   flutter_launcher_icons:
+  cached_network_image:
 
 flutter_icons:
   android: true
@@ -65,6 +67,7 @@ flutter:
     - assets/favorite.png
     - assets/favoriteList.png
     - assets/splash.png
+    - assets/noImage.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
