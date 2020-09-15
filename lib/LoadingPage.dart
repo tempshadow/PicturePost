@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'PostData.dart';
 
-
 Future<List<PostData>> fetchPhotos(http.Client client) async {
   final response =
   await client.get('https://picturepost.ou.edu/app/GetPostList');
@@ -21,6 +20,9 @@ List<PostData> parsePhotos(String responseBody) {
 
   return parsed.map<PostData>((json) => PostData.fromJson(json)).toList();
 }
+
+
+// ignore: must_be_immutable
 class LoadingPage extends StatelessWidget {
 
   @override
@@ -43,7 +45,7 @@ class LoadingPage extends StatelessWidget {
                   if (snapshot.hasError) print(snapshot.error);
 
                   return snapshot.hasData
-                      ? MyApp(posts: snapshot.data)
+                      ? MyApp(posts: snapshot.data,)
                       : new Positioned(
                       child: new Align(
                           alignment: FractionalOffset.bottomCenter,
@@ -57,27 +59,4 @@ class LoadingPage extends StatelessWidget {
       )
     );
   }
-  /*@override
-  Widget build(BuildContext context) {
-    return new SplashScreen(
-        seconds: 14,
-        //navigateAfterSeconds: new AfterSplash(),
-        navigateAfterSeconds: FutureBuilder<List<PostData>>(
-          future: fetchPhotos(http.Client()),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) print(snapshot.error);
-
-            return snapshot.hasData
-                ? MyApp(posts: snapshot.data)
-                : Center(child: CircularProgressIndicator());
-          },
-        ),
-        image: new Image.asset("assets/splash.png",
-          fit: BoxFit.cover,
-          height: double.infinity,
-          width: double.infinity,
-          alignment: Alignment.center,),
-        photoSize: 300.0,
-    );
-  }*/
 }

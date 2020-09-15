@@ -1,14 +1,20 @@
+import 'package:Picturepost/PostData.dart';
 import 'package:Picturepost/PostScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 class MapMarker {
   final String id;
+  final int postId;
+  final int setId;
+  final int pictureId;
+  final String date;
   final LatLng position;
   final BitmapDescriptor icon;
   final String name;
   final String description;
   final BuildContext context;
+  List<PostData> data;
   MapMarker({
     @required this.id,
     @required this.position,
@@ -16,6 +22,12 @@ class MapMarker {
     @required this.name,
     @required this.description,
     @required this.context,
+    @required this.data,
+    @required this.date,
+    @required this.postId,
+    @required this.pictureId,
+    @required this.setId,
+
   });
 
   Marker toMarker() => Marker(
@@ -29,10 +41,18 @@ class MapMarker {
       title: name,
       snippet: description,
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PostScreen(name)),
+          MaterialPageRoute(
+            builder: (context) => new PostScreen(name, id,
+                position.latitude, position.longitude, data, date, postId, pictureId, setId),
+          ),
         );
+        /*Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => new PostScreen(name, id,
+              position.latitude, position.longitude)),
+        );*/
       }
     ),
   );

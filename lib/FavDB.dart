@@ -7,7 +7,7 @@ class FavDB {
   var database;
 
   void create() async {
-    database = openDatabase(
+    database = await openDatabase(
       // Set the path to the database. Note: Using the `join` function from the
       // `path` package is best practice to ensure the path is correctly
       // constructed for each platform.
@@ -46,7 +46,6 @@ class FavDB {
 
     // Query the table for all The Favorites.
     final List<Map<String, dynamic>> maps = await db.query('favorites');
-    print(maps.length);
 
     // Convert the List<Map<String, dynamic> into a List<Favorite>.
     return List.generate(maps.length, (i) {
@@ -90,14 +89,15 @@ class FavDB {
   }
 
   void insert(Favorite favorite) async {
-    await insertFavorite(favorite);
+    print("there");
+    await Future.delayed(Duration(milliseconds: 5), () => insertFavorite(favorite));
   }
 
   void update(Favorite favorite) async {
-    await updateFavorite(favorite);
+    await Future.delayed(Duration(milliseconds: 5), () =>updateFavorite(favorite));
   }
 
-  void delet(int id) async {
-    await deleteFavorite(id);
+  void delete(int id) async {
+    await Future.delayed(Duration(milliseconds: 5), () =>deleteFavorite(id));
   }
 }

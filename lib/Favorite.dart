@@ -4,7 +4,7 @@ class Favorite {
   final double lat;
   final double lon;
 
-  Favorite({this.id, this.lat, this.lon});
+  Favorite({this.id, this.lat, this.lon,});
 
   Map<String, dynamic> toMap() {
     return {
