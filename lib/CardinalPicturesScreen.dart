@@ -18,7 +18,6 @@ class CardinalPicturesScreen extends StatefulWidget {
 class _State extends State<CardinalPicturesScreen> {
   @override
   Widget build(BuildContext context) {
-    print(widget.pictureSetTimestamp);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,

@@ -1,5 +1,7 @@
+import 'package:Picturepost/AllPostsScreen.dart';
 import 'package:Picturepost/FavDB.dart';
 import 'package:Picturepost/Favorite.dart';
+import 'package:Picturepost/FavoriteListScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -80,7 +82,8 @@ class MyAppState extends State<MyApp> {
                 postId: post.postId,
                 date: post.installDate,
                 pictureId: post.postPictureId,
-                setId: post.referencePictureSetId).toMarker());
+                setId: post.referencePictureSetId, screen: 1,
+                currentLocation: currentLocation).toMarker());
           }
         }
       }
@@ -98,7 +101,8 @@ class MyAppState extends State<MyApp> {
             postId: post.postId,
             date: post.installDate,
             pictureId: post.postPictureId,
-            setId: post.referencePictureSetId).toMarker());
+            setId: post.referencePictureSetId, screen: 1,
+            currentLocation: currentLocation).toMarker());
       }
       for(var favorite in favoriteMarkers) {
         allMarkers.removeWhere((element) =>
@@ -127,7 +131,8 @@ class MyAppState extends State<MyApp> {
             postId: post.postId,
             date: post.installDate,
             pictureId: post.postPictureId,
-            setId: post.referencePictureSetId).toMarker());
+            setId: post.referencePictureSetId, screen: 1,
+            currentLocation: currentLocation).toMarker());
       }
     }
   }
@@ -135,6 +140,7 @@ class MyAppState extends State<MyApp> {
   LocationData destinationLocation;
   Location location;
   bool loading = true;
+  bool _isButtonDisabled = true;
   @override
   Widget build(BuildContext context) {
     if(loading) {
@@ -180,27 +186,65 @@ class MyAppState extends State<MyApp> {
               )
             ]
         ),
-        bottomNavigationBar: BottomAppBar(
-          child:
-            Row(children: <Widget>[
-
-            ],)
-        ),
-        body:
-        loading == true // If favorites is null
+        body: loading == true // If favorites is null
             ? Center(
           // Display Progress Indicator
           child: CircularProgressIndicator(),
-        )
+             )
             : GoogleMap(
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(
-            target: _center,
+            target: LatLng(currentLocation.latitude,
+                currentLocation.longitude),
             zoom: 3.25,
           ),
           markers: markers.toSet(),
         ),
+        bottomNavigationBar: BottomAppBar(
+            child: Container(
+                height: 55,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      buildPostListButton(),
+                      buildFavoriteListButton(),
+                    ]
+                ),
+            ),
+        ),
       ),
+    );
+  }
+  Widget buildPostListButton() {
+    return new FlatButton(
+      color: _isButtonDisabled ? Colors.transparent : Colors.white,
+      child: Text("All Posts List"),
+      onPressed: _isButtonDisabled ? null : () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => new AllPostsScreen(posts,
+                currentLocation),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget buildFavoriteListButton() {
+    return new FlatButton(
+      color: _isButtonDisabled ? Colors.transparent : Colors.white,
+      child: Text("Favorites List"),
+      onPressed: _isButtonDisabled ? null : () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+            new FavoriteListScreen(posts, currentLocation),
+          ),
+        );
+      },
     );
   }
 
@@ -210,11 +254,15 @@ class MyAppState extends State<MyApp> {
     favorites = await db.favorites();
     posts = widget.posts;
     fillList(context);
+    location = new Location();
+    currentLocation = await location.getLocation();
     if(mounted) {
-      setState(() { loading = false; });
+      setState(() {
+        loading = false;
+        _isButtonDisabled = false;
+      });
     }
   }
-
 
   void updateMap() async {
 

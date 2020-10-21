@@ -3,6 +3,7 @@ import 'package:Picturepost/PostScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
+import 'package:location/location.dart';
 class MapMarker {
   final String id;
   final int postId;
@@ -14,6 +15,8 @@ class MapMarker {
   final String name;
   final String description;
   final BuildContext context;
+  final int screen;
+  final LocationData currentLocation;
   List<PostData> data;
   MapMarker({
     @required this.id,
@@ -27,6 +30,8 @@ class MapMarker {
     @required this.postId,
     @required this.pictureId,
     @required this.setId,
+    @required this.screen,
+    @required this.currentLocation,
 
   });
 
@@ -45,14 +50,10 @@ class MapMarker {
           context,
           MaterialPageRoute(
             builder: (context) => new PostScreen(name, id,
-                position.latitude, position.longitude, data, date, postId, pictureId, setId),
+                position.latitude, position.longitude, data, date, postId,
+                pictureId, setId, screen, currentLocation),
           ),
         );
-        /*Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => new PostScreen(name, id,
-              position.latitude, position.longitude)),
-        );*/
       }
     ),
   );

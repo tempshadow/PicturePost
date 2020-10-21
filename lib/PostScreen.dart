@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:Picturepost/AllPostsScreen.dart';
 import 'package:Picturepost/CardinalPicturesScreen.dart';
 import 'package:Picturepost/FavDB.dart';
+import 'package:Picturepost/FavoriteListScreen.dart';
+import 'package:Picturepost/PictureSetScreen.dart';
 import 'package:Picturepost/PostAndPictureSet.dart';
 import 'package:Picturepost/PostData.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Favorite.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 
 import 'PictureSet.dart';
 
@@ -45,16 +49,21 @@ class PostScreen extends StatefulWidget {
   Favorite favorite;
   FavDB db;
   int postId;
+  int screen;
   String id;
   List<Favorite> list;
   List<PostData> data;
+  LocationData currentLocation;
   PostScreen(String name, String id, double lat, double lon,
-      List<PostData> data, String date, int postId, int pictureId, int setID) {
+      List<PostData> data, String date, int postId, int pictureId, int setID,
+      int screen, LocationData currentLocation) {
     this.name = name;
     this.data = data;
     this.postId = postId;
     this.id = id;
     this.favorite = new Favorite(id: int.parse(id), lat: lat, lon: lon);
+    this.screen = screen;
+    this.currentLocation = currentLocation;
   }
 
   @override
@@ -77,7 +86,6 @@ class _State extends State<PostScreen> {
     super.initState();
   }
   void begin() async {
-    //NOTE: issues is with passing over a favorite, need to pass over a post
     db = await Future.delayed(oneSecond, () => FavDB());
     db.create();
     favorites = await Future.delayed(Duration(milliseconds: 5),
@@ -120,7 +128,6 @@ class _State extends State<PostScreen> {
       setState(() {
         isSwitched=value;
         if(value == true) {
-          print("here");
           db.insert(widget.favorite);
         }
         else {
@@ -157,12 +164,39 @@ class _State extends State<PostScreen> {
           leading: BackButton(
             color: Colors.green,
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyApp(posts: widget.data),
-                ),
-              );
+              switch(widget.screen) {
+                case 1: {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyApp(posts: widget.data),
+                    ),
+                  );
+                }
+                break;
+
+                case 2: {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AllPostsScreen(
+                          widget.data, widget.currentLocation),
+                    ),
+                  );
+                }
+                break;
+
+                case 3: {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FavoriteListScreen(
+                          widget.data, widget.currentLocation),
+                    ),
+                  );
+                }
+                break;
+              }
             },
           ),
           title: Text(widget.name, style: TextStyle(color: Colors.black)
@@ -201,7 +235,12 @@ class _State extends State<PostScreen> {
                   child: FlatButton(
                     textColor: Colors.green,
                     onPressed: () {
-
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                            PictureSetScreen(widget.postId)
+                        ),
+                      );
                     },
                     child: Text("Take New Picture Set"),
                   ),
