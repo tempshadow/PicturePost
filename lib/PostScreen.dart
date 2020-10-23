@@ -235,10 +235,11 @@ class _State extends State<PostScreen> {
                   child: FlatButton(
                     textColor: Colors.green,
                     onPressed: () {
+                      List<String> list = ['', '', '', '', '', '', '', '', ''];
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            PictureSetScreen(widget.postId)
+                            PictureSetScreen(widget.postId, list)
                         ),
                       );
                     },
