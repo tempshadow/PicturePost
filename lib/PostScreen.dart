@@ -54,9 +54,14 @@ class PostScreen extends StatefulWidget {
   List<Favorite> list;
   List<PostData> data;
   LocationData currentLocation;
+  double lat;
+  double lon;
+  int pictureId;
+  int setId;
+  String date;
   PostScreen(String name, String id, double lat, double lon,
       List<PostData> data, String date, int postId, int pictureId, int setID,
-      int screen, LocationData currentLocation) {
+  int screen, LocationData currentLocation) {
     this.name = name;
     this.data = data;
     this.postId = postId;
@@ -64,6 +69,12 @@ class PostScreen extends StatefulWidget {
     this.favorite = new Favorite(id: int.parse(id), lat: lat, lon: lon);
     this.screen = screen;
     this.currentLocation = currentLocation;
+    this.lon = lon;
+    this.lat =lat;
+    this.setId = setID;
+    this.pictureId = pictureId;
+    this.date = date;
+
   }
 
   @override
@@ -239,7 +250,11 @@ class _State extends State<PostScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) =>
-                            PictureSetScreen(widget.postId, list)
+                            PictureSetScreen(widget.name, widget.pictureId,
+                                widget.screen, widget.id, widget.lon,
+                                widget.lat, widget.date, widget.setId,
+                                widget.data, widget.currentLocation,
+                                widget.postId, list, 0)
                         ),
                       );
                     },

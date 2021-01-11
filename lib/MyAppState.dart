@@ -11,6 +11,7 @@ import 'main.dart';
 
 class MyAppState extends State<MyApp> {
   FavDB db;
+  bool editing = false;
   List<bool> isSelected = [true, false];
   List<Favorite> favorites = [];
   void init() async{

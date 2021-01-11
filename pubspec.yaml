@@ -47,6 +47,7 @@ dev_dependencies:
   geolocator:
   camera:
   path_provider:
+  native_device_orientation:
 
 flutter_icons:
   android: true
